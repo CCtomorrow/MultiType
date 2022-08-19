@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:padding="@dimen/normal_space"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="@dimen/normal_space">
 
     <ImageView
         android:layout_width="@dimen/category_icon_size"
         android:layout_height="@dimen/category_icon_size"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher" />
 
-    <androidx.legacy.widget.Space
+    <Space
         android:layout_width="@dimen/normal_space"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
     <TextView
         android:id="@+id/title"
@@ -23,13 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@android:color/black"
-        tool:text="title"/>
+        tool:text="title" />
 
     <TextView
+        android:id="@+id/more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableRight="@drawable/ic_right"
         android:gravity="center_vertical"
-        android:text="更多"/>
+        android:text="更多" />
 
 </LinearLayout>

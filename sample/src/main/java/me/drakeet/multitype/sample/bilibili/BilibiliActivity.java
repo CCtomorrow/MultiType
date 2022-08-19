@@ -16,15 +16,23 @@
 
 package me.drakeet.multitype.sample.bilibili;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuInflater;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import me.drakeet.multitype.MultiTypeAdapter;
 import me.drakeet.multitype.sample.MenuBaseActivity;
 import me.drakeet.multitype.sample.R;
@@ -35,88 +43,114 @@ import me.drakeet.multitype.sample.common.CategoryItemViewBinder;
  * @author drakeet
  */
 public class BilibiliActivity extends MenuBaseActivity {
+    private static final String TAG = "BilibiliActivity";
+    private static final int SPAN_COUNT = 2;
+    @VisibleForTesting
+    List<Object> items;
+    @VisibleForTesting
+    MultiTypeAdapter adapter;
 
-  private static final int SPAN_COUNT = 2;
-  @VisibleForTesting List<Object> items;
-  @VisibleForTesting MultiTypeAdapter adapter;
+    private static class JsonData {
 
+        private static final String PREFIX = "这是一条长长的达到两行的标题文字";
 
-  private static class JsonData {
+        private Post post00 = new Post(R.drawable.img_00, PREFIX + "post00");
+        private Post post01 = new Post(R.drawable.img_01, PREFIX + "post01");
+        private Post post10 = new Post(R.drawable.img_10, PREFIX + "post10");
+        private Post post11 = new Post(R.drawable.img_11, PREFIX + "post11");
 
-    private static final String PREFIX = "这是一条长长的达到两行的标题文字";
+        Category category0 = new Category("title0");
+        Post[] postArray = {post00, post01, post10, post11};
 
-    private Post post00 = new Post(R.drawable.img_00, PREFIX + "post00");
-    private Post post01 = new Post(R.drawable.img_01, PREFIX + "post01");
-    private Post post10 = new Post(R.drawable.img_10, PREFIX + "post10");
-    private Post post11 = new Post(R.drawable.img_11, PREFIX + "post11");
+        List<Post> postList = new ArrayList<>();
 
-    Category category0 = new Category("title0");
-    Post[] postArray = { post00, post01, post10, post11 };
-
-    List<Post> postList = new ArrayList<>();
-
-
-    {
-      postList.add(post00);
-      postList.add(post00);
-      postList.add(post00);
-      postList.add(post00);
-      postList.add(post00);
-      postList.add(post00);
+        {
+            postList.add(post00);
+            postList.add(post00);
+            postList.add(post00);
+            postList.add(post00);
+            postList.add(post00);
+            postList.add(post00);
+        }
     }
-  }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_list);
+        // 获取Heap Size阈值
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        // 返回值是以Mb为单位
+        int memoryClass = am.getMemoryClass();
+        int largeMemoryClass = am.getLargeMemoryClass();
+        Log.e(TAG, "memoryClass=" + memoryClass);
+        Log.e(TAG, "largeMemoryClass=" + largeMemoryClass);
 
-    adapter = new MultiTypeAdapter();
-    adapter.register(Category.class, new CategoryItemViewBinder());
+        adapter = new MultiTypeAdapter();
+        adapter.register(Category.class, new CategoryItemViewBinder());
+        adapter.register(Post.class, new PostViewBinder());
+        adapter.register(PostList.class, new HorizontalPostsViewBinder());
 
-    adapter.register(Post.class, new PostViewBinder());
-    adapter.register(PostList.class, new HorizontalPostsViewBinder());
+        int drag = ItemTouchHelper.LEFT | ItemTouchHelper.UP | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN;
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(drag, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                //获取被拖拽的Item的Position
+                int from = viewHolder.getAdapterPosition();
+                //获取目标Item的Position
+                int endPosition = target.getAdapterPosition();
+                Object o = items.get(from);
+                items.remove(from);
+                items.add(endPosition, o);
+                adapter.notifyDataSetChanged();
+                Log.e(TAG, "onMove fromPosition=" + from + " toPosition=" + endPosition);
+                return true;
+            }
 
-    RecyclerView recyclerView = findViewById(R.id.list);
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+        });
+        RecyclerView recyclerView = findViewById(R.id.list);
+        helper.attachToRecyclerView(recyclerView);
 
-    final GridLayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT);
-    SpanSizeLookup spanSizeLookup = new SpanSizeLookup() {
-      @Override
-      public int getSpanSize(int position) {
-        Object item = items.get(position);
-        return (item instanceof PostList || item instanceof Category) ? SPAN_COUNT : 1;
-      }
-    };
-    layoutManager.setSpanSizeLookup(spanSizeLookup);
-    recyclerView.setLayoutManager(layoutManager);
-    int space = getResources().getDimensionPixelSize(R.dimen.normal_space);
-    recyclerView.addItemDecoration(new PostItemDecoration(space, spanSizeLookup));
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT);
+        SpanSizeLookup spanSizeLookup = new SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                Object item = items.get(position);
+                return (item instanceof PostList || item instanceof Category) ? SPAN_COUNT : 1;
+            }
+        };
+        layoutManager.setSpanSizeLookup(spanSizeLookup);
+        recyclerView.setLayoutManager(layoutManager);
+        int space = getResources().getDimensionPixelSize(R.dimen.normal_space);
+        recyclerView.addItemDecoration(new PostItemDecoration(space, spanSizeLookup));
 
-    recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
-    JsonData data = new JsonData();
-    items = new ArrayList<>();
-    for (int i = 0; i < 10; i++) {
-      /* You also could use Category as your CategoryItemContent directly */
-      items.add(data.category0);
-      items.add(data.postArray[0]);
-      items.add(data.postArray[1]);
-      items.add(data.postArray[2]);
-      items.add(data.postArray[3]);
-      items.add(data.postArray[0]);
-      items.add(data.postArray[1]);
-      items.add(new PostList(data.postList));
+        JsonData data = new JsonData();
+        items = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            /* You also could use Category as your CategoryItemContent directly */
+            items.add(data.category0);
+            items.add(data.postArray[0]);
+            items.add(data.postArray[1]);
+            items.add(data.postArray[2]);
+            items.add(data.postArray[3]);
+            items.add(data.postArray[0]);
+            items.add(data.postArray[1]);
+            items.add(new PostList(data.postList));
+        }
+        adapter.setItems(items);
+        adapter.notifyDataSetChanged();
     }
-    adapter.setItems(items);
-    adapter.notifyDataSetChanged();
-  }
 
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.menu_main, menu);
-    return true;
-  }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
 }

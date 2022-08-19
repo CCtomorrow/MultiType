@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 drakeet. https://github.com/drakeet
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +17,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="me.drakeet.multitype.sample">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,28 +36,29 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup, GoogleAppIndexingWarning">
 
-        <activity
-            android:name=".bilibili.BilibiliActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <activity android:name=".bilibili.BilibiliActivity"></activity>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+        <activity android:name=".multiSelectable.MultiSelectableActivity" />
+
+        <activity android:name=".normal.NormalActivity" />
+
+        <activity android:name=".weibo.WeiboActivity" />
+
+        <activity android:name=".communicateWithBinder.SimpleActivity" />
+
+        <activity android:name=".one2many.OneDataToManyActivity" />
+
+        <activity android:name=".payload.TestPayloadActivity" />
+
+        <activity android:name=".moreApis.MoreApisPlayground" />
+
+        <activity android:name=".web.WebActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".multiSelectable.MultiSelectableActivity"/>
-
-        <activity android:name=".normal.NormalActivity"/>
-
-        <activity android:name=".weibo.WeiboActivity"/>
-
-        <activity android:name=".communicateWithBinder.SimpleActivity"/>
-
-        <activity android:name=".one2many.OneDataToManyActivity"/>
-
-        <activity android:name=".payload.TestPayloadActivity"/>
-
-        <activity android:name=".moreApis.MoreApisPlayground"/>
 
     </application>
 

@@ -34,9 +34,6 @@ android {
 dependencies {
   compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   compileOnly project(':library')
-
-  testImplementation 'junit:junit:4.12'
-  testImplementation "androidx.recyclerview:recyclerview:${gradle.recyclerviewVersion}"
 }
 
 repositories {

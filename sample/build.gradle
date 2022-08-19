@@ -19,35 +19,52 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-  compileSdkVersion gradle.compileSdkVersion
-  defaultConfig {
-    applicationId "me.drakeet.multitype.sample"
-    minSdkVersion gradle.minSdkVersion
-    targetSdkVersion gradle.targetSdkVersion
-    versionCode gradle.versionCode
-    versionName gradle.versionName
-    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-  }
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    compileSdkVersion gradle.compileSdkVersion
+    defaultConfig {
+        applicationId "me.drakeet.multitype.sample"
+        minSdkVersion gradle.minSdkVersion
+        targetSdkVersion gradle.targetSdkVersion
+        versionCode gradle.versionCode
+        versionName gradle.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-  }
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
+
+    flavorDimensions "versionCode"
+
+//    productFlavors {
+//        defaultChannel {
+//        }
+//        secondChannel {
+//            applicationId = "me.drakeet.multitype.sample2"
+//        }
+//    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation project(':library')
-  implementation project(':library-ktx')
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-  androidTestImplementation 'androidx.test:rules:1.1.1'
-  androidTestImplementation "androidx.annotation:annotation:${gradle.annotationVersion}"
-  implementation "androidx.appcompat:appcompat:${gradle.appcompatVersion}"
-  implementation "androidx.recyclerview:recyclerview:${gradle.recyclerviewVersion}"
-  implementation 'com.google.code.gson:gson:2.8.5'
+    implementation project(':library')
+    implementation project(':library-ktx')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    implementation "androidx.appcompat:appcompat:${gradle.appcompatVersion}"
+    implementation "androidx.recyclerview:recyclerview:${gradle.recyclerviewVersion}"
+
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.blankj:utilcodex:1.31.0'
+    implementation 'com.github.getActivity:XXPermissions:15.0'
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation "androidx.annotation:annotation:${gradle.annotationVersion}"
 }

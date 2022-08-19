@@ -30,5 +30,5 @@ task checkStyle(type: Checkstyle) {
 }
 
 // check code style after project evaluation
-afterEvaluate { project -> getTasksByName('checkStyle', false)[0].execute()
-}
+//afterEvaluate { project -> getTasksByName('checkStyle', false)[0].execute()
+//}
